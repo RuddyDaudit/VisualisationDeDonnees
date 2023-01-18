@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Visualisation de donnée - Ex 01</title>
+</head>
+<body>
+   <div style="margin-left: 150px;">
+        <a href="visu02.html">Visualisation de donnée - Ex 02</a>
+
+        <pre>
+        <p>Liste des musées en Bretagne</p> 
+
+        #Musées en Bretagne
+SELECT DISTINCT ?museumLabel ?museumDescription ?villeId ?villeIdLabel (?villeIdLabel AS ?ville) ?coord ?lat ?lon
+WHERE
+{
+  ?museum wdt:P539 ?museofile.  # french museofile Id
+  ?museum wdt:P131* wd:Q12130. # in Brittany
+  ?museum wdt:P131 ?villeId. #city of the museum
+  # ?object wdt:P166 wd:Q2275045 # that have french label "musées de France"
+  OPTIONAL {?museum wdt:P856 ?link.}     # official website
+  OPTIONAL {?museum wdt:P625 ?coord .} # geographic coord
+  OPTIONAL {
+    ?museum p:P625 ?statement.
+    ?statement psv:P625 ?node.
+    ?node wikibase:geoLatitude ?lat.
+    ?node wikibase:geoLongitude ?lon.
+   }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "fr". } #french label
+}
+ORDER BY  ?villeIdLabel
+</pre>
+
+<pre>
+  <p>Pokédex National</p>
+  
+  #Pokémon!
+# Updated 2020-06-17
+
+# Gotta catch 'em all
+SELECT DISTINCT ?pokemon ?pokemonLabel ?pokedexNumber
+WHERE
+{
+    ?pokemon wdt:P31/wdt:P279* wd:Q3966183 .
+    ?pokemon p:P1685 ?statement.
+    ?statement ps:P1685 ?pokedexNumber;
+              pq:P972 wd:Q20005020.
+    FILTER (! wikibase:isSomeValue(?pokedexNumber) )
+    SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en" }
+}
+ORDER BY (?pokedexNumber)
+</pre>  
+</body>
+</html>
